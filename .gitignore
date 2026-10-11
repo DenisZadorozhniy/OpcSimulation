@@ -1,6 +1,8 @@
 /tmp
 /out-tsc
 /NOTES.md
+/scripts
+/.github
 
 /node_modules
 npm-debug.log*
