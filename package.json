@@ -1,0 +1,33 @@
+{
+  "name": "opc-simulation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:api": "playwright test --project=api",
+    "test:opcua": "playwright test --project=opcua",
+    "test:security": "playwright test --project=security",
+    "test:browser": "playwright test --project=ui",
+    "test:integration": "playwright test --project=integration",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --outDir out-tsc",
+    "cleanup:devices": "node out-tsc/scripts/cleanupDevices.js",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
+  },
+  "dependencies": {
+    "mqtt": "^5.15.2",
+    "node-opcua": "^2.186.12"
+  }
+}
