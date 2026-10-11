@@ -274,3 +274,25 @@ TypeScript, ESLint, сборка и Prettier прошли.
 Проверка readiness защищённого endpoint прошла. Подробности расположения сертификатов,
 исследования node-opcua 2.186.12 и настройки стенда: [SECURITY_NOTES.md](SECURITY_NOTES.md).
 Полный набор UI/API/integration в рамках этого модуля не запускался.
+
+### Разделение Page Objects и Steps
+
+По замечанию к архитектуре создан `tests/steps/AirQualitySteps.ts`.
+В `AirQualityPage` оставлены только приватные локаторы, навигация, клик по поиску,
+чтение текста, ожидание загрузки и методы видимости. Assertions, преобразование AQI в число,
+подготовка London, вызов штатного HTTP-updater сайта и сценарии перехвата перенесены в Steps.
+`SearchPage` уже содержал только локаторы и базовые действия, поэтому не изменялся.
+Fixture, все UI-тесты и UI-часть integration используют `london.steps`.
+Определения локаторов остаются в Page Objects; `expect.poll` повторяет проверки через их методы.
+Сетевой mock сохраняет ответственность за перехват и проверку фактически доставленного ответа.
+
+Проверен весь TypeScript-код на оставшиеся обращения к прежним методам Page Objects:
+таких обращений нет; в `src/pages` нет assertions, API-клиентов или вызовов JavaScript updater.
+API/OPC UA/security-клиенты и их тесты не менялись. Существующие пользовательские изменения
+`SECURITY_NOTES.md` и удаление `WeatherPage.ts` сохранены.
+
+Реальный UI-прогон после рефакторинга: **4/7 прошли, 3 упали**
+(empty, missing, http-error) на прежнем требовании unavailable, теперь в AirQualitySteps.
+Новые падения не появились; условия assertions не ослаблены. Артефакты: `tmp/ui-steps-results`.
+TypeScript, ESLint, build и format:check прошли. Integration обновлён и проверен компилятором;
+публичный API и полный integration в этом рефакторинге не запускались.
