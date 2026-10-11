@@ -3,8 +3,8 @@ import { expect, test } from '../fixtures';
 test.setTimeout(60_000);
 
 test('should search for London', async ({ london }) => {
-  await london.airQuality.expectLondon();
-  expect(await london.airQuality.readAqi()).toBe(london.mock.lastRealValue);
+  await london.steps.expectLondon();
+  expect(await london.steps.readAqi()).toBe(london.mock.lastRealValue);
   expect(london.mock.requestCount).toBeGreaterThan(0);
   expect(london.pageErrors).toEqual([]);
 });
@@ -12,22 +12,15 @@ test('should search for London', async ({ london }) => {
 test('should render an out-of-range AQI of 999 from the intercepted response', async ({
   london,
 }) => {
-  const before = london.mock.requestCount;
-  london.mock.setScenario('value', 999);
-  await london.airQuality.refreshAqi();
-  await expect.poll(() => london.mock.requestCount).toBeGreaterThan(before);
-  london.mock.assertHealthy();
+  await london.steps.applyScenario('value', 999);
   expect(london.mock.lastDeliveredValue).toBe(999);
-  await london.airQuality.expectAqi(999);
+  await london.steps.expectAqi(999);
   expect(london.pageErrors).toEqual([]);
 });
 
 test('should label stale telemetry instead of presenting it as fresh', async ({ london }) => {
-  const before = london.mock.requestCount;
-  london.mock.setScenario('stale');
-  await london.airQuality.refreshAqi();
-  await expect.poll(() => london.mock.requestCount).toBeGreaterThan(before);
-  await london.airQuality.expectStaleSignal();
+  await london.steps.applyScenario('stale');
+  await london.steps.expectStaleSignal();
   expect(london.pageErrors).toEqual([]);
 });
 
@@ -39,12 +32,8 @@ test('should label stale telemetry instead of presenting it as fresh', async ({ 
  */
 for (const scenario of ['empty', 'missing', 'invalid', 'http-error'] as const) {
   test(`should handle ${scenario} telemetry without misleading stale data`, async ({ london }) => {
-    const before = london.mock.requestCount;
-    london.mock.setScenario(scenario);
-    await london.mock.expectScenarioDelivered(() => london.airQuality.refreshAqi());
-    await expect.poll(() => london.mock.requestCount).toBeGreaterThan(before);
-    london.mock.assertHealthy();
-    await london.airQuality.expectUnavailableSignal();
+    await london.steps.applyScenario(scenario);
+    await london.steps.expectUnavailableSignal();
     expect(london.pageErrors).toEqual([]);
   });
 }

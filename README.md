@@ -79,13 +79,18 @@ HTML-отчёт: `playwright-report/index.html`; JSON: `test-results/results.jso
 
 - `src/api`: общий HTTP-клиент и типизированные методы устройств с правилами переходов.
 - `src/opcua`: клиент соединений, browse, чтения, подписок и записи.
-- `src/pages`: Page Objects; селекторы и действия UI находятся здесь.
+- `src/pages`: Page Objects; приватные локаторы, навигация, клики, чтение текста и видимость.
+- `tests/steps`: `AirQualitySteps`; сценарии UI, assertions и координация перехвата AQI.
 - `src/mocks`: перехват реального JSON AQI London и проверка структуры ответа.
 - `tests/fixtures.ts`: подготовка London и очистка собственных API-объектов.
 - `tests/api`, `tests/opcua`, `tests/ui`, `tests/integration`: четыре набора тестов.
 - `.github/workflows/tests.yml`: зависимости, статические проверки, Docker, все тесты, артефакты.
 
 Тесты выполняются одним worker: симулятор имеет общее изменяемое состояние.
+
+UI-тесты и UI-часть integration обращаются к `london.steps`. Page Objects не содержат
+`expect`, HTTP-вызовов или логики подмены. Проверки используют `expect.poll` поверх
+методов Page Objects; определения локаторов остаются внутри `src/pages`.
 API-тесты изменяют только ID, созданные собственным POST; объекты 1–13 защищены.
 Исходное значение записываемого OPC UA узла восстанавливается в `finally`.
 

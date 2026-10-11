@@ -39,14 +39,10 @@ test('should propagate one live reading through OPC UA, API and AQI UI', async (
     expect(persisted.data.model).toBe(provisioned.data.model);
     expect(persisted.data.sensor_type).toBe(provisioned.data.sensor_type);
 
-    const before = london.mock.requestCount;
-    london.mock.setScenario('value', persisted.data.lastReading);
-    await london.airQuality.refreshAqi();
-    await expect.poll(() => london.mock.requestCount).toBeGreaterThan(before);
-    london.mock.assertHealthy();
+    await london.steps.applyScenario('value', persisted.data.lastReading);
     expect(london.mock.lastDeliveredValue).toBe(persisted.data.lastReading);
-    await london.airQuality.expectAqi(reading);
-    expect(await london.airQuality.readAqi()).toBe(reading);
+    await london.steps.expectAqi(reading);
+    expect(await london.steps.readAqi()).toBe(reading);
     expect(london.pageErrors).toEqual([]);
 
     const deleteResponse = await deviceApi.decommissionDevice(provisioned.id);
