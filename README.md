@@ -1,8 +1,3 @@
-# OpcSimulation
-
-Автоматизация на TypeScript и Playwright по `TASK_REQUIREMENTS.pdf.pdf`:
-aqicn.org, REST-жизненный цикл устройств, OPC UA и интеграционный поток OPC UA → API → UI.
-
 ## Подготовка
 
 Требуются Node.js 24, npm, доступ к интернету и OPC UA симулятор.
